@@ -27,7 +27,7 @@ Then restart `dsh web`. Requires dsh ≥ 0.1.2-rc.1 (developed and verified on 0
 ## Usage
 
 - **Click a card** → open that subagent's full session.
-- **Hover the update area** → read the complete update text.
+- **Hover the update area** → a frosted popover shows the full update, markdown-rendered (lists and code blocks intact).
 - No configuration needed — install and it works.
 
 ## How it works (30-second version)
