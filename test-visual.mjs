@@ -181,4 +181,4 @@ assert.ok(markup.includes('安全审查'), 'stopped child with a fresh finding m
 assert.ok(markup.includes('dsh-sp-update'), 'update bar missing');
 
 console.log('visual-test.html written, markup length:', markup.length);
-console.log('visibility assertions passed: 2 chips (running only), stopped child hidden, finding persists on bar');
+console.log('visibility assertions passed: 3 chips (running only), stalled dot shown, stopped child hidden, finding persists on bar');
