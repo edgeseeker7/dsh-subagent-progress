@@ -1,49 +1,50 @@
 # dsh-subagent-progress
 
-在主 agent 会话的输入框上方实时显示子 agent 进度摘要的 DeepSeek Harness 插件。
-Live subagent progress summaries above the parent conversation composer for DeepSeek Harness.
+English | [中文](README.zh.md)
+
+Live subagent progress summaries above the parent conversation composer — a DeepSeek Harness plugin.
 
 ![status](https://img.shields.io/badge/status-early-orange)
 
-## 它做什么
+## What it does
 
-每个子 agent 是一个完整的 Agent + Session,其每一条 session 事件都会在宿主上触发。本插件把「被动观测」和「主动汇报」两条路线合在同一个插件里:
+Every subagent is a full Agent + Session whose committed events fire on the host. This plugin combines **passive observation** and **active reporting** in one package:
 
-1. **Host · 被动观测**:注册一个 `subagentProgress` session 投影(projection),把每个子 agent session 的事件折叠成小型进度状态——当前轮次/步骤、工具调用计数、最近调用的工具名、最近一段助手文本预览。投影变更由 dsh 的 SessionControlController **自动广播**到所有浏览器(零推送代码),并自带持久化缓存与重连 baseline。
-2. **Host · 主动汇报(notify_user)**:监听 `agent/created`,给每个子 agent 的作用域(`agent.ctx`)装一个 `notify_user` 工具 + 一段使用引导(官方 `dsh-tool-subagent-report` 同款 child-scoped 模式,对父 agent 与兄弟不可见,agent dispose 时自动卸载)。引导要求模型用**极短的一句话**(理想 15 词以内)只说最重要的事实 + 当前进度(做完了什么/正在做什么/还剩多少),支持 Markdown 行内语法。**工具的 execute 不做任何投递**——这次调用本身就是子会话日志里的一条普通 `tool/call` 事件,被同一个投影折叠成 `lastUpdate`,持久化、可回放、零额外通道。
-3. **Client 半**:在 `conversation.input.dock` slot 渲染**毛玻璃(glassmorphism)进度坞**,几何尺寸直接复用官方 dock 的 `--dsh-composer-card-max-width` 等变量,与输入框卡片精确对齐(不铺满全屏)。**可见性契约:胶囊只属于正在运行的子 agent——子 agent 一停,它的胶囊立即消失,不残留;汇报栏则展示"还在运行的子 agent 的最新汇报"或"已结束的子 agent 留下的重要发现(`finding`)";既没有运行中的子 agent 也没有重要发现时,整个进度坞彻底消失。** 胶囊整排居中:呼吸状态点、标签、`轮 N·步 M`、最近工具、耗时(等宽数字)、清理过 markdown 符号的单行预览;汇报栏由 kind 色主导(蓝=进展 / 琥珀=预期 / 紫=发现,8% 淡染玻璃 + 28% 边框,不是色块糊脸),消息体经宿主 `MarkdownText` 组件渲染(支持 **粗体**、`code`、列表等);胶囊保持中性,唯一色彩信号是状态点——绿=活跃运行、琥珀=运行中但 5 分钟无新事件(卡住预警,数据来自投影的 `updatedAt`)。响应式:窄屏下胶囊换行居中、预览隐藏、汇报栏消息自动折行。全部颜色取自宿主 `--dsw-*` 主题变量(亮/暗自适应),样式表按官方约定在模块物化期注入并打 `data-plugin-css` 标(HMR 可认领)。点击胶囊/汇报栏经 catalog 地址(`openSubagent`)打开对应子 agent 会话。
+1. **Host · Passive observation** — registers a `subagentProgress` session projection that folds each child session's events into a small progress state: current turn/step, tool-call count, most recent tool name, and a short preview of the latest assistant text. Projection changes are **broadcast automatically** to every browser by dsh's SessionControlController (zero push code), with a persisted checkpoint cache and reconnect baselines included.
+2. **Host · Active reporting (`notify_user`)** — listens for `agent/created` and installs a `notify_user` tool plus usage guidance into every subagent's own scope (`agent.ctx`) — the same child-scoped pattern as the official `dsh-tool-subagent-report`, invisible to parent and siblings, unwound automatically on agent disposal. The guidance asks the model for **one very short line** (ideally under 15 words) carrying only the most important fact plus current progress (what is done / what is happening / what is left); inline Markdown is supported. **The tool's `execute` deliberately delivers nothing** — the call itself is an ordinary `tool/call` event in the child's durable session log, which the same projection fold turns into `lastUpdate`: durable, replayable, and no extra channel.
+3. **Client half** — renders a **frosted-glass progress dock** into the `conversation.input.dock` slot, geometry-matched to the composer card via the official `--dsh-composer-card-max-width` variables (never full-window). **Visibility contract: chips belong only to running subagents — the moment a subagent stops, its chip disappears; the update bar shows the freshest update from a still-running child, or an important `finding` left behind by a finished one; with nothing running and no finding, the whole dock vanishes.** Chips are centered as a row: breathing status dot, label, `turn N · step M`, last tool, elapsed time (tabular numerals), and a single-line preview with Markdown markers stripped. The update bar is owned by its kind color (blue = progress / amber = eta / violet = finding — a faint 8% tinted glass with a 28% border, not a solid color block), and its message renders through the host's `MarkdownText` component (**bold**, `code`, lists, …). Chips stay neutral: the only color signal is the status dot — green = actively working, amber = running but silent for 5+ minutes (stall warning, sourced from the projection's `updatedAt`). Responsive: on narrow screens chips wrap centered, previews hide, and the update message wraps onto its own line. All colors come from the host's `--dsw-*` theme variables (light/dark adaptive), and the stylesheet is injected at module materialization with a `data-plugin-css` tag per the official HMR-claiming convention. Clicking a chip or the bar opens the child session through the catalog-addressed `openSubagent` navigation.
 
-数据流:
+Data flow:
 
 ```
-child session events (含 notify_user 的 tool/call)
+child session events (including notify_user tool/call)
   → sessionProjections fold (subagentProgress)
   → SessionControlController broadcast → client projection store
   → useSessions().byId[child].projectionValues.subagentProgress → chips
 ```
 
-不修改 dsh 任何源码;即使模型从不调用 `notify_user`,被动观测也保证有进度可看。
+No dsh source is modified; even if the model never calls `notify_user`, passive observation guarantees visible progress.
 
-## 安装
+## Install
 
 ```bash
-dsh plugin --profile web add <本仓库路径或 npm 包名>
+dsh plugin --profile web add dsh-subagent-progress
 ```
 
-然后重启 `dsh web`。
+Then restart `dsh web`.
 
-## 验证记录(2026-09-09,headless profile 实测)
+## Verification (2026-09-09, headless profile)
 
-在 headless profile 中跑了真实委派任务:
+Real delegation tasks were run in the headless profile:
 
-1. 子 agent 的 `request/header` 里确认 `notify_user` 出现在其工具列表中,且使用引导出现在其 system prompt;非子 agent 会话不安装(单测覆盖)。
-2. 委派"读 4 个文件并总结"任务,子 agent 实际调用了 **5 次** `notify_user`:4 次阶段性进展(每读完一个文件一次)+ 1 次 `kind: finding` 关键发现,全部作为 `tool/call` 事件落入其持久会话日志。
-3. 把该真实子会话日志逐事件回放进投影折叠:产出 25 个去重后的 view,最终 view schema 校验通过,`lastUpdate` 为最后一条 finding,`updateCount: 5`。
+1. The child agent's `request/header` confirmed `notify_user` among its tools and the guidance in its system prompt; non-subagent sessions never receive the tool (unit-test covered).
+2. A "read 4 files and summarize" delegation produced **5 real `notify_user` calls**: 4 staged progress updates (one per file) + 1 `kind: finding` key discovery — all persisted as `tool/call` events in the child's session log.
+3. Replaying that real child session log through the projection fold produced 25 deduplicated views; the final view passes schema validation with the finding as `lastUpdate` and `updateCount: 5`.
 
-另有 `node test-client.mjs`(client 结构与导航自检)和 `node test-visual.mjs`(真实 React 渲染 + headless chromium 截图的视觉效果验证)。
+Also see `node test-client.mjs` (client structure & navigation self-check) and `node test-visual.mjs` (real React render + headless-chromium screenshot verification).
 
-## 设计说明
+## Design notes
 
-- **为什么是投影而不是轮询**:dsh 的投影框架(`ctx.sessionProjections`)提供同步纯折叠、`Object.is` 变更抑制、持久化 checkpoint、以及到浏览器的免费实时通道,与官方 `subagentTiming`/`turnOutline` 完全同构。
-- **为什么只折叠少量字段**:投影的 wire view 每次变更都会广播;保持小而扁平(turn/step/lastTool/lastText/lastUpdate/active/updatedAt)可以把流量降到最低。
-- **为什么 notify_user 的 execute 是"假动作"**:工具调用本身已经持久化在子会话日志里,投影折叠从中提取更新,天然获得持久化、回放、resume 语义;另开投递通道只会重复造轮子。
+- **Why a projection instead of polling**: dsh's projection framework (`ctx.sessionProjections`) provides synchronous pure folds, `Object.is` change suppression, persisted checkpoints, and a free real-time channel to browsers — the same architecture as the official `subagentTiming`/`turnOutline` units.
+- **Why so few folded fields**: the wire view is broadcast on every change; keeping it small and flat (turn/step/lastTool/lastText/lastUpdate/active/updatedAt) minimizes traffic, and a changed view always implies changed content (no heartbeat broadcasts).
+- **Why `notify_user`'s execute is a no-op**: the call is already durable in the child session log, and the fold extracts updates from there — persistence, replay, and resume semantics come for free. A separate delivery channel would only reinvent the wheel.
