@@ -100,6 +100,17 @@ const summaries = {
       subagentTiming: { settledMs: 0, active: { since: NOW - 620000, through: NOW } }
     }
   },
+  z: {
+    // Finished 10 seconds ago: within the grace window — its chip lingers
+    // with an idle dot and its final settled duration.
+    id: 'child-zeta', origin: 'subagent', parentId: 'root', running: false,
+    displayTitle: '刚完成的任务',
+    projectionValues: {
+      subagent: { mode: 'one-shot', label: '刚完成的任务', seq: 1 },
+      subagentProgress: { turn: 1, step: 4, toolCalls: 5, lastTool: 'write', lastText: null, lastUpdate: { kind: 'progress', message: '写完了 `lib/index.js`。', at: NOW - 10000 }, updateCount: 1, active: false, updatedAt: NOW - 10000 },
+      subagentTiming: { settledMs: 45000 }
+    }
+  },
   d: {
     // Stopped but left an important result: no chip, yet its finding stays on
     // the bar (it is the freshest important update).
@@ -172,13 +183,15 @@ writeFileSync(new URL('./visual-test.html', import.meta.url), html);
 // child vanishes unless its important finding is the freshest thing to show.
 import assert from 'node:assert/strict';
 const chipCount = (markup.match(/dsh-sp-chip"/g) ?? []).length;
-assert.equal(chipCount, 3, `expected 3 chips (running children only), got ${chipCount}`);
+assert.equal(chipCount, 4, `expected 4 chips (3 running + 1 grace), got ${chipCount}`);
 assert.ok(markup.includes('评审插件架构'), 'running child alpha missing');
 assert.ok(markup.includes('调研上下文注入'), 'running child beta missing');
 assert.ok(markup.includes('dsh-sp-stalled'), 'silent-but-running child must show the amber stalled dot');
-assert.ok(!markup.includes('已完成的调研'), 'stopped child without update must vanish');
+assert.ok(markup.includes('刚完成的任务'), 'just-finished child must linger during the grace window');
+assert.ok(!markup.includes('已完成的调研'), 'long-stopped child must vanish');
 assert.ok(markup.includes('安全审查'), 'stopped child with a fresh finding must stay on the bar');
 assert.ok(markup.includes('dsh-sp-update'), 'update bar missing');
+assert.ok(markup.includes('dsh-sp-close'), 'close button missing');
 
 console.log('visual-test.html written, markup length:', markup.length);
-console.log('visibility assertions passed: 3 chips (running only), stalled dot shown, stopped child hidden, finding persists on bar');
+console.log('visibility assertions passed: 4 chips (3 running + 1 grace), stalled dot, long-stopped hidden, finding persists, close button present');
