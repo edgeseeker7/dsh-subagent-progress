@@ -90,6 +90,16 @@ const summaries = {
       subagentTiming: { settledMs: 345000 }
     }
   },
+  e: {
+    // Running but silent for 10 minutes: chip stays, dot turns amber (stalled).
+    id: 'child-epsilon', origin: 'subagent', parentId: 'root', running: true,
+    displayTitle: '长任务执行',
+    projectionValues: {
+      subagent: { mode: 'one-shot', label: '长任务执行', seq: 1 },
+      subagentProgress: { turn: 1, step: 2, toolCalls: 2, lastTool: 'bash', lastText: null, lastUpdate: null, updateCount: 0, active: true, updatedAt: NOW - 600000 },
+      subagentTiming: { settledMs: 0, active: { since: NOW - 620000, through: NOW } }
+    }
+  },
   d: {
     // Stopped but left an important result: no chip, yet its finding stays on
     // the bar (it is the freshest important update).
@@ -162,9 +172,10 @@ writeFileSync(new URL('./visual-test.html', import.meta.url), html);
 // child vanishes unless its important finding is the freshest thing to show.
 import assert from 'node:assert/strict';
 const chipCount = (markup.match(/dsh-sp-chip"/g) ?? []).length;
-assert.equal(chipCount, 2, `expected 2 chips (running children only), got ${chipCount}`);
+assert.equal(chipCount, 3, `expected 3 chips (running children only), got ${chipCount}`);
 assert.ok(markup.includes('评审插件架构'), 'running child alpha missing');
 assert.ok(markup.includes('调研上下文注入'), 'running child beta missing');
+assert.ok(markup.includes('dsh-sp-stalled'), 'silent-but-running child must show the amber stalled dot');
 assert.ok(!markup.includes('已完成的调研'), 'stopped child without update must vanish');
 assert.ok(markup.includes('安全审查'), 'stopped child with a fresh finding must stay on the bar');
 assert.ok(markup.includes('dsh-sp-update'), 'update bar missing');
