@@ -1,0 +1,28 @@
+# Changelog
+
+## 0.2.2 (2026-09-09)
+
+- Close control is now a real glass button inside the dock (was a ghost glyph clipping outside).
+- One type scale across the dock: MarkdownText descendants inherit the dock's 12px/11px scale.
+
+## 0.2.1 (2026-09-09)
+
+- Guidance hardening: notify_user demands ONE single sentence (readable in two seconds) with
+  concrete shape examples; send_message/report content distilled to its first-line headline.
+- Unified card: a running/grace child is one element — status head, progress meta, todo
+  preview, and its latest update in a hairline-separated section. Standalone rows remain only
+  for orphaned findings.
+- Update messages preserve Markdown structure (lists render).
+- Cards dedupe against update rows; lastText no longer leaks raw report text.
+- Key-information cards: todo done/total, distilled current action with its key argument.
+
+## 0.2.0 (2026-09-09)
+
+- Grace window: a just-finished child's card lingers 30s before disappearing.
+- Dismissible dock (close button); any new activity revives it automatically.
+
+## 0.1.0 (2026-09-09)
+
+- First public release: frosted-glass progress dock above the composer (running-only chips,
+  kind-tinted update bar, stall indicator), child-scoped notify_user tool with cadence nudge,
+  subagentProgress session projection, bilingual README.
