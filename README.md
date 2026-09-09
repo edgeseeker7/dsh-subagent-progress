@@ -4,7 +4,7 @@ English | [中文](README.zh.md)
 
 Live subagent progress summaries above the parent conversation composer — a DeepSeek Harness plugin.
 
-![status](https://img.shields.io/badge/status-early-orange)
+![ci](https://github.com/edgeseeker7/dsh-subagent-progress/actions/workflows/ci.yml/badge.svg)
 
 ## What it does
 

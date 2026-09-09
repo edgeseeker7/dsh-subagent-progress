@@ -5,7 +5,7 @@
 在主 agent 会话的输入框上方实时显示子 agent 进度摘要的 DeepSeek Harness 插件。
 Live subagent progress summaries above the parent conversation composer for DeepSeek Harness.
 
-![status](https://img.shields.io/badge/status-early-orange)
+![ci](https://github.com/edgeseeker7/dsh-subagent-progress/actions/workflows/ci.yml/badge.svg)
 
 ## 它做什么
 
