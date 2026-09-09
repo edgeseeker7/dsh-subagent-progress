@@ -4,6 +4,25 @@
   "description": "Live subagent progress dock for DeepSeek Harness: folds each child session's events into a subagentProgress projection (turn/step, last tool, latest assistant preview, notify_user updates) and renders a frosted-glass status dock above the parent conversation composer.",
   "author": "edgeseeker7",
   "license": "MIT",
+  "keywords": [
+    "dsh-plugin",
+    "dsh",
+    "deepseek-harness",
+    "subagent",
+    "agent",
+    "progress",
+    "notify"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "node --check lib/index.js && node --check lib/client.js && node test-client.mjs && node test-visual.mjs",
+    "prepublishOnly": "pnpm test"
+  },
   "type": "module",
   "main": "./lib/index.js",
   "exports": {
@@ -15,7 +34,8 @@
   "files": [
     "lib",
     "cordis.patch.yml",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "sideEffects": false,
   "dsh": {
