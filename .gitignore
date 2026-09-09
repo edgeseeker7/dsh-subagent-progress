@@ -4,3 +4,4 @@ node_modules/
 visual-test.html
 visual-test.png
 visual-test-narrow.png
+.npmrc
