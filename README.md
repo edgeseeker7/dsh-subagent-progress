@@ -6,7 +6,7 @@ English | [中文](README.zh.md)
 
 ![screenshot](docs/screenshot.png)
 
-![ci](https://github.com/edgeseeker7/dsh-subagent-progress/actions/workflows/ci.yml/badge.svg)
+[![npm](https://img.shields.io/npm/v/dsh-subagent-progress)](https://www.npmjs.com/package/dsh-subagent-progress) [![ci](https://github.com/edgeseeker7/dsh-subagent-progress/actions/workflows/ci.yml/badge.svg)](https://github.com/edgeseeker7/dsh-subagent-progress/actions)
 
 ## What you see
 
@@ -22,7 +22,7 @@ English | [中文](README.zh.md)
 dsh plugin --profile web add dsh-subagent-progress
 ```
 
-Then restart `dsh web`. Requires dsh ≥ 0.1.2-rc.1 (developed and verified on 0.1.2-rc.1).
+Then restart `dsh web`. Published on npm as [dsh-subagent-progress](https://www.npmjs.com/package/dsh-subagent-progress). Requires dsh ≥ 0.1.2-rc.1 (developed and verified on 0.1.2-rc.1).
 
 ## Usage
 

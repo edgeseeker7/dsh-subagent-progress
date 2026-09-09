@@ -6,7 +6,7 @@
 
 ![截图](docs/screenshot.png)
 
-![ci](https://github.com/edgeseeker7/dsh-subagent-progress/actions/workflows/ci.yml/badge.svg)
+[![npm](https://img.shields.io/npm/v/dsh-subagent-progress)](https://www.npmjs.com/package/dsh-subagent-progress) [![ci](https://github.com/edgeseeker7/dsh-subagent-progress/actions/workflows/ci.yml/badge.svg)](https://github.com/edgeseeker7/dsh-subagent-progress/actions)
 
 ## 你会看到什么
 
@@ -22,7 +22,7 @@
 dsh plugin --profile web add dsh-subagent-progress
 ```
 
-然后重启 `dsh web`。要求 dsh ≥ 0.1.2-rc.1(在 0.1.2-rc.1 上开发和验证)。
+然后重启 `dsh web`。包托管在 npm:[dsh-subagent-progress](https://www.npmjs.com/package/dsh-subagent-progress),要求 dsh ≥ 0.1.2-rc.1(在 0.1.2-rc.1 上开发和验证)。
 
 ## 使用
 
