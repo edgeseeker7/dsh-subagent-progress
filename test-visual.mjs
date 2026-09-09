@@ -10,9 +10,37 @@ import { renderToStaticMarkup } from 'react-dom/server';
 const code = readFileSync(new URL('./lib/client.js', import.meta.url), 'utf8');
 let entry = null;
 vm.runInNewContext(code, { window: { __ModuleLoader__: { load: (e) => { entry = e; } } } });
+// Minimal MarkdownText stub for the visual test: renders a tiny subset
+// (**bold**, `code`, - lists) so the screenshot exercises the markdown path.
+const MarkdownTextStub = ({ text }) => {
+  const lines = String(text).split('\n');
+  const inline = (s, key) => {
+    const parts = [];
+    let rest = s;
+    let i = 0;
+    while (rest.length > 0) {
+      let m = rest.match(/^\*\*([^*]+)\*\*/);
+      if (m) { parts.push(React.createElement('strong', { key: `${key}-${i++}` }, m[1])); rest = rest.slice(m[0].length); continue; }
+      m = rest.match(/^`([^`]+)`/);
+      if (m) { parts.push(React.createElement('code', { key: `${key}-${i++}` }, m[1])); rest = rest.slice(m[0].length); continue; }
+      m = rest.match(/^[^*`]+|^[*`](?!.*)/);
+      parts.push(rest.slice(0, m[0].length));
+      rest = rest.slice(m[0].length);
+      i++;
+    }
+    return parts;
+  };
+  if (lines.length === 1) return React.createElement('span', {}, inline(lines[0], 'l'));
+  return React.createElement(
+    'ul',
+    {},
+    lines.map((line, idx) => React.createElement('li', { key: idx }, inline(line.replace(/^-\s*/, ''), idx)))
+  );
+};
 const api = entry.factory((name) => {
-  if (name !== 'react') throw new Error(`unexpected require("${name}")`);
-  return React;
+  if (name === 'react') return React;
+  if (name === '@deepseek-ai/dsh-client-ui-primitives') return { MarkdownText: MarkdownTextStub };
+  throw new Error(`unexpected require("${name}")`);
 });
 
 let registered = null;
@@ -39,7 +67,7 @@ const summaries = {
     displayTitle: '评审 dsh-subagent-progress 架构',
     projectionValues: {
       subagent: { mode: 'continuable', label: '评审插件架构', seq: 1 },
-      subagentProgress: { turn: 1, step: 20, toolCalls: 23, lastTool: 'bash', lastText: '我先按步骤逐个读文件。', lastUpdate: { kind: 'progress', message: '已读完插件全部 5 个文件,正在对照 dsh 框架源码核验 host 半的投影契约与事件形状。', at: NOW - 8000 }, updateCount: 3, active: true, updatedAt: NOW - 1000 },
+      subagentProgress: { turn: 1, step: 20, toolCalls: 23, lastTool: 'bash', lastText: '我先按步骤逐个读文件。', lastUpdate: { kind: 'finding', message: '**关键发现**:`tool/call` 事件直接落日志,投影折叠后自动广播:\n- 持久化、可回放\n- 零额外推送代码', at: NOW - 8000 }, updateCount: 3, active: true, updatedAt: NOW - 1000 },
       subagentTiming: { settledMs: 0, active: { since: NOW - 153000, through: NOW } }
     }
   },
@@ -79,7 +107,12 @@ const html = `<!doctype html>
     --dsw-alias-label-tertiary: #7b8499;
     --dsw-alias-label-dimmed: #a7adbb;
     --dsw-alias-border-l1: rgba(28,35,51,.18);
+    --dsw-alias-interactive-bg-hover: rgba(28,35,51,.06);
     --dsw-specific-menu: #ffffff;
+    /* composer geometry the dock aligns to (mirrors the host) */
+    --dsh-composer-side-clearance: 16px;
+    --dsh-composer-card-max-width: 780px;
+    --dsh-composer-dock-inset: 8px;
   }
   * { margin: 0; box-sizing: border-box; }
   /* freeze animations at their final state for the static screenshot */
@@ -95,12 +128,15 @@ const html = `<!doctype html>
       #f3f5f9;
   }
   .mock-composer {
-    margin-top: 14px; height: 84px; border-radius: 16px;
+    box-sizing: border-box;
+    width: calc(100% - 2 * var(--dsh-composer-side-clearance));
+    max-width: var(--dsh-composer-card-max-width);
+    margin: 14px auto 0; height: 84px; border-radius: 16px;
     background: rgba(255,255,255,.8); border: 1px solid rgba(28,35,51,.1);
     display: flex; align-items: center; padding: 0 20px;
     color: #a7adbb; font-size: 14px;
   }
-  .frame { max-width: 980px; margin: 0 auto; }
+  .frame { max-width: 1080px; margin: 0 auto; }
   ${css}
 </style></head>
 <body><div class="frame">

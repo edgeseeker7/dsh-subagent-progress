@@ -24,6 +24,10 @@ assert.match(code, /conversation\.input\.dock/, 'must register into conversation
 assert.match(code, /openSubagent/, 'must prefer catalog-addressed navigation');
 assert.match(code, /entry\.kind === 'child'/, 'catalog mode lookup must filter to real children');
 assert.match(code, /dataset\.pluginCss/, 'stylesheet must be tagged for HMR claiming');
+assert.match(code, /MarkdownText/, 'update messages must render via the host MarkdownText primitive');
+assert.match(code, /--dsh-composer-card-max-width/, 'dock must align with the composer card geometry');
+assert.match(code, /justify-content: center/, 'chips row must be centered');
+assert.match(code, /@media \(max-width: 720px\)/, 'responsive rules missing');
 
 const reactStub = {
   createElement: (...args) => ({ args }),
@@ -33,8 +37,10 @@ const reactStub = {
   useId: () => 'test-id'
 };
 const exports_ = entry.factory((name) => {
-  assert.equal(name, 'react', `unexpected require("${name}")`);
-  return reactStub;
+  if (name === 'react') return reactStub;
+  // No primitives in the stub environment → MarkdownText falls back to plain text.
+  if (name === '@deepseek-ai/dsh-client-ui-primitives') return {};
+  throw new Error(`unexpected require("${name}")`);
 });
 assert.deepEqual([...exports_.inject].sort(), ['locale', 'sessions', 'slots']);
 
