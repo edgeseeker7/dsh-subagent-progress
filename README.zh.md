@@ -34,6 +34,8 @@ dsh plugin --profile web add <本仓库路径或 npm 包名>
 
 然后重启 `dsh web`。
 
+兼容性：需要 dsh ≥ 0.1.2-rc.1(在 0.1.2-rc.1 上开发和验证;host 半在任何部署形态下工作,UI 半仅在 dsh web 下渲染)。
+
 ## 设计说明
 
 - **为什么是投影而不是轮询**:dsh 的投影框架(`ctx.sessionProjections`)提供同步纯折叠、`Object.is` 变更抑制、持久化 checkpoint、以及到浏览器的免费实时通道,与官方 `subagentTiming`/`turnOutline` 完全同构。

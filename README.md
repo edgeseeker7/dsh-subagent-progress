@@ -33,6 +33,8 @@ dsh plugin --profile web add dsh-subagent-progress
 
 Then restart `dsh web`.
 
+Compatibility: requires dsh ≥ 0.1.2-rc.1 (developed and verified on 0.1.2-rc.1; the host half works in any deployment, the UI half renders only under dsh web).
+
 ## Design notes
 
 - **Why a projection instead of polling**: dsh's projection framework (`ctx.sessionProjections`) provides synchronous pure folds, `Object.is` change suppression, persisted checkpoints, and a free real-time channel to browsers — the same architecture as the official `subagentTiming`/`turnOutline` units.
