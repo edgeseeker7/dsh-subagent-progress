@@ -4,6 +4,14 @@
   "description": "Live subagent progress dock for DeepSeek Harness: folds each child session's events into a subagentProgress projection (turn/step, last tool, latest assistant preview, notify_user updates) and renders a frosted-glass status dock above the parent conversation composer.",
   "author": "edgeseeker7",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edgeseeker7/dsh-subagent-progress.git"
+  },
+  "bugs": {
+    "url": "https://github.com/edgeseeker7/dsh-subagent-progress/issues"
+  },
+  "homepage": "https://github.com/edgeseeker7/dsh-subagent-progress#readme",
   "keywords": [
     "dsh-plugin",
     "dsh",
