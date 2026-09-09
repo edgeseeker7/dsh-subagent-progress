@@ -13,6 +13,7 @@ English | [中文](README.zh.md)
 - **One card per running subagent**: label, turn/step, todo completion (`1/3`), the exact action in flight (`bash: cargo build --release`, not a bare tool name), and elapsed time.
 - **Subagents report in their own words**: one-sentence updates about progress, how long remains, and key discoveries — blue = progress, amber = ETA, violet = finding.
 - **Stall alerts**: a live subagent silent for 5+ minutes turns its status dot amber.
+- **Aligned at any count**: cards snap into an equal-width grid with a uniform four-row structure, so they line up perfectly whether there are two or ten; beyond two rows the panel scrolls instead of eating your screen.
 - **Zero nagging**: when a subagent finishes, its card lingers 30 seconds then disappears; important findings stay behind on their own; the × in the corner dismisses the dock, and it quietly comes back when anything new happens.
 
 ## Install
