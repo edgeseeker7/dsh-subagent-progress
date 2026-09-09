@@ -67,7 +67,7 @@ const summaries = {
     displayTitle: '评审 dsh-subagent-progress 架构',
     projectionValues: {
       subagent: { mode: 'continuable', label: '评审插件架构', seq: 1 },
-      subagentProgress: { turn: 1, step: 20, toolCalls: 23, lastTool: 'bash', lastText: '我先按步骤逐个读文件。', lastUpdate: { kind: 'finding', message: '**关键发现**:`tool/call` 事件直接落日志,投影折叠后自动广播:\n- 持久化、可回放\n- 零额外推送代码', at: NOW - 8000 }, updateCount: 3, active: true, updatedAt: NOW - 1000 },
+      subagentProgress: { turn: 1, step: 20, toolCalls: 23, lastTool: 'bash', lastText: '我先按步骤逐个读文件。', lastUpdate: { kind: 'progress', message: '已读完 **5 个文件**,正在核验 host 半的投影契约。', at: NOW - 8000 }, updateCount: 3, active: true, updatedAt: NOW - 1000 },
       subagentTiming: { settledMs: 0, active: { since: NOW - 153000, through: NOW } }
     }
   },
@@ -81,12 +81,24 @@ const summaries = {
     }
   },
   c: {
+    // Stopped with no update: must disappear entirely (no chip, no bar).
     id: 'child-gamma', origin: 'subagent', parentId: 'root', running: false,
     displayTitle: '调研子agent进度机制',
     projectionValues: {
-      subagent: { mode: 'one-shot', label: '调研进度机制', seq: 1 },
-      subagentProgress: { turn: 2, step: 11, toolCalls: 18, lastTool: 'read', lastText: null, lastUpdate: { kind: 'finding', message: '关键发现:投影变更本来就会被广播到浏览器,不需要自己写推送。', at: NOW - 600000 }, updateCount: 4, active: false, updatedAt: NOW - 600000 },
+      subagent: { mode: 'one-shot', label: '已完成的调研', seq: 1 },
+      subagentProgress: { turn: 2, step: 11, toolCalls: 18, lastTool: 'read', lastText: null, lastUpdate: null, updateCount: 0, active: false, updatedAt: NOW - 600000 },
       subagentTiming: { settledMs: 345000 }
+    }
+  },
+  d: {
+    // Stopped but left an important result: no chip, yet its finding stays on
+    // the bar (it is the freshest important update).
+    id: 'child-delta', origin: 'subagent', parentId: 'root', running: false,
+    displayTitle: '安全审查',
+    projectionValues: {
+      subagent: { mode: 'one-shot', label: '安全审查', seq: 1 },
+      subagentProgress: { turn: 1, step: 6, toolCalls: 9, lastTool: 'grep', lastText: null, lastUpdate: { kind: 'finding', message: '**关键发现**:`tool/call` 事件直接落日志,投影折叠后自动广播:\n- 持久化、可回放\n- 零额外推送代码', at: NOW - 2000 }, updateCount: 2, active: false, updatedAt: NOW - 300000 },
+      subagentTiming: { settledMs: 96000 }
     }
   }
 };
@@ -145,4 +157,17 @@ const html = `<!doctype html>
 </div></body></html>`;
 
 writeFileSync(new URL('./visual-test.html', import.meta.url), html);
+
+// Visibility contract assertions: chips only for running children; a stopped
+// child vanishes unless its important finding is the freshest thing to show.
+import assert from 'node:assert/strict';
+const chipCount = (markup.match(/dsh-sp-chip"/g) ?? []).length;
+assert.equal(chipCount, 2, `expected 2 chips (running children only), got ${chipCount}`);
+assert.ok(markup.includes('评审插件架构'), 'running child alpha missing');
+assert.ok(markup.includes('调研上下文注入'), 'running child beta missing');
+assert.ok(!markup.includes('已完成的调研'), 'stopped child without update must vanish');
+assert.ok(markup.includes('安全审查'), 'stopped child with a fresh finding must stay on the bar');
+assert.ok(markup.includes('dsh-sp-update'), 'update bar missing');
+
 console.log('visual-test.html written, markup length:', markup.length);
+console.log('visibility assertions passed: 2 chips (running only), stopped child hidden, finding persists on bar');
