@@ -33,16 +33,6 @@ dsh plugin --profile web add dsh-subagent-progress
 
 Then restart `dsh web`.
 
-## Verification (2026-09-09, headless profile)
-
-Real delegation tasks were run in the headless profile:
-
-1. The child agent's `request/header` confirmed `notify_user` among its tools and the guidance in its system prompt; non-subagent sessions never receive the tool (unit-test covered).
-2. A "read 4 files and summarize" delegation produced **5 real `notify_user` calls**: 4 staged progress updates (one per file) + 1 `kind: finding` key discovery — all persisted as `tool/call` events in the child's session log.
-3. Replaying that real child session log through the projection fold produced 25 deduplicated views; the final view passes schema validation with the finding as `lastUpdate` and `updateCount: 5`.
-
-Also see `node test-client.mjs` (client structure & navigation self-check) and `node test-visual.mjs` (real React render + headless-chromium screenshot verification).
-
 ## Design notes
 
 - **Why a projection instead of polling**: dsh's projection framework (`ctx.sessionProjections`) provides synchronous pure folds, `Object.is` change suppression, persisted checkpoints, and a free real-time channel to browsers — the same architecture as the official `subagentTiming`/`turnOutline` units.

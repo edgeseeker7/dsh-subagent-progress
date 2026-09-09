@@ -34,16 +34,6 @@ dsh plugin --profile web add <本仓库路径或 npm 包名>
 
 然后重启 `dsh web`。
 
-## 验证记录(2026-09-09,headless profile 实测)
-
-在 headless profile 中跑了真实委派任务:
-
-1. 子 agent 的 `request/header` 里确认 `notify_user` 出现在其工具列表中,且使用引导出现在其 system prompt;非子 agent 会话不安装(单测覆盖)。
-2. 委派"读 4 个文件并总结"任务,子 agent 实际调用了 **5 次** `notify_user`:4 次阶段性进展(每读完一个文件一次)+ 1 次 `kind: finding` 关键发现,全部作为 `tool/call` 事件落入其持久会话日志。
-3. 把该真实子会话日志逐事件回放进投影折叠:产出 25 个去重后的 view,最终 view schema 校验通过,`lastUpdate` 为最后一条 finding,`updateCount: 5`。
-
-另有 `node test-client.mjs`(client 结构与导航自检)和 `node test-visual.mjs`(真实 React 渲染 + headless chromium 截图的视觉效果验证)。
-
 ## 设计说明
 
 - **为什么是投影而不是轮询**:dsh 的投影框架(`ctx.sessionProjections`)提供同步纯折叠、`Object.is` 变更抑制、持久化 checkpoint、以及到浏览器的免费实时通道,与官方 `subagentTiming`/`turnOutline` 完全同构。
