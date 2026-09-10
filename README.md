@@ -23,7 +23,7 @@ English | [中文](README.zh.md)
 dsh plugin --profile web add dsh-subagent-progress
 ```
 
-Then restart `dsh web`. Published on npm as [dsh-subagent-progress](https://www.npmjs.com/package/dsh-subagent-progress). Requires dsh ≥ 0.1.2-rc.1 (verified on both 0.1.2-rc.1 and 0.1.5-rc.1).
+Then restart `dsh web`. Published on npm as [dsh-subagent-progress](https://www.npmjs.com/package/dsh-subagent-progress). Requires dsh ≥ 0.1.2-rc.1 — see [Compatibility](#compatibility).
 
 ## Usage
 
@@ -39,6 +39,26 @@ Two channels, one outlet:
 - **Active reporting**: every subagent gets a `notify_user` tool plus guidance to report in single sentences (and a gentle reminder after 6 consecutive tool calls without one). Each report is an ordinary event in the child's durable session log, carried out by the same channel — persistent and replayable by construction.
 
 No dsh source is modified; the host half works in any deployment, the UI half renders only under dsh web.
+
+## Compatibility
+
+Official dsh plugins declare their version contract as `peerDependencies` on the `@deepseek-ai/*` core packages they touch; this plugin follows the same convention. All core packages ship in lockstep release trains (0.1.x-rc), so one range covers the whole host.
+
+**Supported: dsh ≥ 0.1.2-rc.1, < 0.2.0. Developed and live-verified on 0.1.5-rc.1.**
+
+The floor is not arbitrary — it comes from the exact API surface this plugin uses, checked against the published tarballs of every core release:
+
+| API surface we use | Provided by | Introduced |
+|---|---|---|
+| `remote.subagents` wire API (`prompt` / `interruptByParent`, `mode: 'continuable'`) — the Retry/Pause buttons | `@deepseek-ai/dsh-api-remotes` | **0.1.2-rc.1** (absent in 0.1.0-rc.8) |
+| `sessionProjections` service (server-side event folding) | `@deepseek-ai/dsh-session-projection` | ≤ 0.1.0-rc.8 |
+| `systemPrompt` service (reporting guidance section) | `@deepseek-ai/dsh-system-prompt` | ≤ 0.1.0-rc.8 |
+| `defineTool` (`notify_user` registration) | `@deepseek-ai/dsh-tools` | ≤ 0.1.0-rc.8 |
+| Client services `sessions` / `slots` / `locale` / `remote` | `@deepseek-ai/dsh-api-session-controller`, `@deepseek-ai/dsh-client-*` | ≤ 0.1.0-rc.8 |
+
+Because the web client declares `remote.subagents` in its cordis `inject`, the whole dock — not just the buttons — requires ≥ 0.1.2-rc.1. Versions 0.1.2 through 0.1.3 are expected to work by API surface but are not continuously tested; 0.1.5-rc.1 is the version every release is verified against.
+
+One nuance on enforcement: npm semver cannot express "any prerelease train from X onward" — a range like `>=0.1.2-rc.1 <0.2.0` only admits the 0.1.2-rc.* line under the same-tuple prerelease rule, and `^0.1.5-rc.1` pins a single train (which is why official plugins redeclare peers every train). Since neither expresses the real contract, this section is the authoritative statement; `peerDependencies` stays minimal (`cordis`, `dsh-tools`), matching the official client-plugin convention.
 
 ## More
 

@@ -23,7 +23,7 @@
 dsh plugin --profile web add dsh-subagent-progress
 ```
 
-然后重启 `dsh web`。包托管在 npm:[dsh-subagent-progress](https://www.npmjs.com/package/dsh-subagent-progress),要求 dsh ≥ 0.1.2-rc.1(在 0.1.2-rc.1 与 0.1.5-rc.1 上验证通过)。
+然后重启 `dsh web`。包托管在 npm:[dsh-subagent-progress](https://www.npmjs.com/package/dsh-subagent-progress),要求 dsh ≥ 0.1.2-rc.1——详见[兼容性](#兼容性)。
 
 ## 使用
 
@@ -39,6 +39,26 @@ dsh plugin --profile web add dsh-subagent-progress
 - **主动汇报**:每个子 agent 启动时会被装上 `notify_user` 工具和一段"一句话汇报"的引导(连续 6 次工具调用不汇报还会收到一句提醒)。它的每次汇报都是会话日志里的普通事件,被同一条通道带出来——天然持久化、可回放。
 
 不修改 dsh 任何源码;host 半在任何部署形态下工作,界面半只在 dsh web 渲染。
+
+## 兼容性
+
+dsh 官方插件用 `peerDependencies` 声明对自己触碰的 `@deepseek-ai/*` 核心包的版本契约,本插件遵循同一约定。核心包按发布列车(0.1.x-rc)整体联动,所以一个区间即可覆盖整个宿主。
+
+**支持范围:dsh ≥ 0.1.2-rc.1 且 < 0.2.0。在 0.1.5-rc.1 上开发并实测验证。**
+
+下限不是拍脑袋——它来自本插件实际使用的 API 面,已逐一对照各核心版本的发布 tarball 核实:
+
+| 我们使用的 API | 提供方 | 引入版本 |
+|---|---|---|
+| `remote.subagents` wire API(`prompt` / `interruptByParent`,`mode: 'continuable'`)——重试/暂停按钮 | `@deepseek-ai/dsh-api-remotes` | **0.1.2-rc.1**(0.1.0-rc.8 没有) |
+| `sessionProjections` 服务(服务端事件折叠) | `@deepseek-ai/dsh-session-projection` | ≤ 0.1.0-rc.8 |
+| `systemPrompt` 服务(汇报引导段) | `@deepseek-ai/dsh-system-prompt` | ≤ 0.1.0-rc.8 |
+| `defineTool`(注册 `notify_user`) | `@deepseek-ai/dsh-tools` | ≤ 0.1.0-rc.8 |
+| 客户端服务 `sessions` / `slots` / `locale` / `remote` | `@deepseek-ai/dsh-api-session-controller`、`@deepseek-ai/dsh-client-*` | ≤ 0.1.0-rc.8 |
+
+由于 web 客户端把 `remote.subagents` 声明进了 cordis 的 `inject`,整个 dock——不只是按钮——都要求 ≥ 0.1.2-rc.1。0.1.2 到 0.1.3 按 API 面推断可用,但未持续测试;每个发布版本都在 0.1.5-rc.1 上验证。
+
+关于强制力的一点说明:npm semver 无法表达"X 之后的所有预发布列车"——`>=0.1.2-rc.1 <0.2.0` 在同元组预发布规则下只认 0.1.2-rc.* 一列,而 `^0.1.5-rc.1` 只能钉死单列(这正是官方插件每列车都重声明 peers 的原因)。两种写法都表达不了真实契约,所以本节才是权威声明;`peerDependencies` 保持最小化(`cordis`、`dsh-tools`),与官方客户端插件的惯例一致。
 
 ## 更多
 
