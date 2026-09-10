@@ -22,7 +22,7 @@ English | [中文](README.zh.md)
 dsh plugin --profile web add dsh-subagent-progress
 ```
 
-Then restart `dsh web`. Published on npm as [dsh-subagent-progress](https://www.npmjs.com/package/dsh-subagent-progress). Requires dsh ≥ 0.1.2-rc.1 (developed and verified on 0.1.2-rc.1).
+Then restart `dsh web`. Published on npm as [dsh-subagent-progress](https://www.npmjs.com/package/dsh-subagent-progress). Requires dsh ≥ 0.1.2-rc.1 (verified on both 0.1.2-rc.1 and 0.1.5-rc.1).
 
 ## Usage
 

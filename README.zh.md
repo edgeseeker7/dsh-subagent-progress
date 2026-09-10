@@ -22,7 +22,7 @@
 dsh plugin --profile web add dsh-subagent-progress
 ```
 
-然后重启 `dsh web`。包托管在 npm:[dsh-subagent-progress](https://www.npmjs.com/package/dsh-subagent-progress),要求 dsh ≥ 0.1.2-rc.1(在 0.1.2-rc.1 上开发和验证)。
+然后重启 `dsh web`。包托管在 npm:[dsh-subagent-progress](https://www.npmjs.com/package/dsh-subagent-progress),要求 dsh ≥ 0.1.2-rc.1(在 0.1.2-rc.1 与 0.1.5-rc.1 上验证通过)。
 
 ## 使用
 
