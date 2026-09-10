@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.0 (2026-09-10)
+
+- Failure surface: `turn/end` with `reason.kind === 'error'` folds into a distilled
+  `failure` (code; one-line message stripped of request ids and provider JSON
+  envelopes; full text for the hover popover). Projection state version 6.
+- Failed subagents keep their card past the grace window with a pulsing red dot and
+  action buttons: **Retry** queues a fresh turn into the child session through the
+  client session face (`prompt(..., 'queue')`), falling back to opening the child
+  when the control channel is unavailable; running cards gain a **Pause** button
+  (`cancel()` → `subagents.interruptByParent`). A new `turn/start` clears the
+  failure durably, so a successful retry restores the normal card on its own.
+
 ## 0.2.2 (2026-09-09)
 
 - Close control is now a real glass button inside the dock (was a ghost glyph clipping outside).
