@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4.2 (2026-09-11)
+
+- Fix: Retry/Pause buttons actually deliver now. They previously routed through
+  the generic session face, which the host rejects for every subagent-owned
+  session ("owned by subagent routing") unless the user had first navigated
+  into the child. Cards now call `remote.subagents.prompt` /
+  `interruptByParent` directly with the continuable address built from the
+  card's own parent id.
+- One-shot (workflow) children no longer show Retry/Pause at all: the official
+  protocol scopes both control operations to continuable children, so those
+  buttons could never have worked. The child catalog is refreshed on dock
+  mount so the distinction is available.
+
 ## 0.4.1 (2026-09-11)
 
 - Fix: card dismissals no longer revive on page switches — the per-card × now
