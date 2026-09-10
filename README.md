@@ -14,7 +14,7 @@ English | [中文](README.zh.md)
 - **Subagents report in their own words**: one-sentence updates about progress, how long remains, and key discoveries — brand blue = progress, amber = ETA, green = finding (all sourced from DS theme variables, light/dark adaptive).
 - **Stall alerts**: a live subagent silent for 5+ minutes turns its status dot amber.
 - **Aligned at any count**: cards snap into an equal-width grid with a uniform four-row structure, so they line up perfectly whether there are two or ten; beyond two rows the panel scrolls instead of eating your screen.
-- **Zero nagging**: when a subagent finishes, its card lingers 30 seconds then disappears; important findings stay behind on their own; the × in the corner dismisses the dock, and it quietly comes back when anything new happens.
+- **Zero nagging**: when a subagent finishes, its card lingers 30 seconds then disappears; important findings linger 5 minutes before disappearing too; every card has its own × to dismiss it individually, and the corner × dismisses the whole dock — either way, everything reappears on its own when new activity arrives.
 
 ## Install
 
