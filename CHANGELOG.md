@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.3 (2026-09-11)
+
+- Fix: Retry/Pause actually deliver (verified in the live GUI). The 0.4.2
+  reroute accessed `ctx.remote.subagents` without declaring the dotted
+  sub-service in the client inject list — cordis throws
+  `cannot get property "remote.subagents" without inject`, killing the
+  button silently. Declared (matching the official session-controller's
+  inject list) and moved service resolution inside the error boundary.
+- Control-channel failures now log detailed diagnostics (`console.error`
+  with the host's rejection object) instead of failing silently.
+
 ## 0.4.2 (2026-09-11)
 
 - Fix: Retry/Pause buttons actually deliver now. They previously routed through
