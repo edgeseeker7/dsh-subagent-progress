@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.1 (2026-09-11)
+
+- Fix: card dismissals no longer revive on page switches — the per-card × now
+  persists to `localStorage` (per session, 7-day expiry), while newer child
+  activity still revives a dismissed card on its own.
+- Fix: single close-button semantics — the redundant dock-level × is removed;
+  each card's own × is the only way to dismiss, one card at a time.
+
 ## 0.4.0 (2026-09-10)
 
 - Failure surface: `turn/end` with `reason.kind === 'error'` folds into a distilled
