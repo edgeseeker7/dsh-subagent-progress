@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.4 (2026-09-11)
+
+- Fix: failure cards now expire after 1 hour (`FAILURE_TTL_MS`). Previously a
+  failed child's card persisted with no TTL until manually dismissed, so
+  failures from an incident that was already resolved re-rendered on every
+  host restart / page load (observed: ~10 stale failure cards from a resolved
+  provider-delisting incident nagging after every `dsh web` restart). The ×
+  dismissal remains the "acknowledge" path; the TTL is the "stale" path.
+
 ## 0.4.3 (2026-09-11)
 
 - Fix: Retry/Pause actually deliver (verified in the live GUI). The 0.4.2
