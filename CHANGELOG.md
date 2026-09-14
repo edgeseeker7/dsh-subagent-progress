@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.6 (2026-09-12)
+
+- Feature: per-card enter animation (user: "出现的时候动画有吗" — only the
+  dock container had one; later mounts popped in abruptly). Cards now rise
+  6px + fade in over 220ms, the mirror of the exit slide; ghosts inside
+  .dsh-sp-leaving never replay it; reduced-motion disables it.
+- Polish: model tag is more discoverable (secondary label color, slightly
+  stronger chip) and also appears in the hover popover head — the badge is
+ 常驻 on the card, hover was never its gate (user: "悬停的时候没看到小徽章").
+
 ## 0.7.5 (2026-09-12)
 
 - Feature: model tag on every card (user request: show which model each
