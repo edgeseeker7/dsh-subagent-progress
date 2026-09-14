@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.5 (2026-09-12)
+
+- Feature: model tag on every card (user request: show which model each
+  subagent uses). Zero new traffic: the host already broadcasts the official
+  `modelSelection` projection per session — the tag reads
+  `projectionValues.modelSelection.lastUsed` (the model of the child's real
+  requests, falling back to the pending selection). Quiet chip in the head
+  next to the disclosure chip; provider and reasoning effort ride the
+  tooltip.
+
 ## 0.7.4 (2026-09-12)
 
 - Fix: dock stayed dead until page reload when it started empty (user:
