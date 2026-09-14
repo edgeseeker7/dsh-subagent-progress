@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.7.4 (2026-09-12)
+
+- Fix: dock stayed dead until page reload when it started empty (user:
+  "subagent 需要刷新才出来"). Root cause found by a no-reload CDP
+  experiment pair: empty baseline → new card never appears (0 cards for
+  48s); non-empty baseline → new card live in +4s. v0.6.2 placed the
+  `collapsedIds` useState AFTER the early `return null`, so an
+  empty→non-empty transition ran one more hook than the previous render —
+  React threw "Rendered more hooks than during the previous render" and
+  the slot's error boundary silently unmounted the dock for the rest of
+  the page lifetime. All hooks now run before the early return.
+- Fix: exit-animation ghosts could strand forever — two departures within
+  one EXIT_MS window made the effect cleanup clear the earlier batch's
+  purge timer. Ghosts now carry a `purgeAt` timestamp purged by a single
+  earliest-expiry timer, immune to overlapping departures.
+
 ## 0.7.3 (2026-09-11)
 
 - Fix: dark corners from the 0.5px ring shadow (user: "四角为什么有点深").
