@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.7 (2026-09-12)
+
+- Fix: effort not visible on the model tag (user: "鼠标一上去看不到
+  effort"). The detail lived in a native title tooltip nested inside a
+  button that carries its OWN title — browsers resolve the nested case
+  inconsistently, and native tooltips need a long dwell anyway. The model
+  chip now opens the plugin's own hover popover (160ms) with the full
+  provider / model / effort detail in Markdown. Native title kept as a
+  fallback.
+
 ## 0.7.6 (2026-09-12)
 
 - Feature: per-card enter animation (user: "出现的时候动画有吗" — only the
