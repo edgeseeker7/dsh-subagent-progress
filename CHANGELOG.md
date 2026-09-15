@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7.8 (2026-09-12)
+
+- Fix: × and Retry buttons "randomly" missing on narrow cards (user
+  screenshot: cards with a model chip lose their ×). The head is a
+  no-wrap flex row and the card clips overflow on the right — a rigid
+  (flex:none) model chip plus status text pushed the rightmost buttons
+  past the edge on ~250px grid columns; cards without modelSelection
+  data kept their buttons, which read as random. Model chip and status
+  text are now shrinkable (flex 0 1 auto + ellipsis), so controls keep
+  their room at any card width.
+
 ## 0.7.7 (2026-09-12)
 
 - Fix: effort not visible on the model tag (user: "鼠标一上去看不到
