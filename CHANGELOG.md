@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.7.9 (2026-09-15)
+
+- Fix: cards flickering / reshuffling while several subagents run (user:
+  "多个subagent一起回答卡片就会闪来闪去"). The level sort used
+  updatedAt-desc as its final key, so every progress tick re-ranked the
+  live group and the CSS grid visibly migrated cards on nearly every
+  poll; near-simultaneous timestamps made it thrash. Position now encodes
+  identity, not freshness: live>failed hierarchy stays, but within a
+  group cards keep a stable spawn order (first-sight sequence). Motion is
+  reserved for state transitions (enter/exit/fail); activity updates
+  render in place.
+
 ## 0.7.8 (2026-09-12)
 
 - Fix: × and Retry buttons "randomly" missing on narrow cards (user
